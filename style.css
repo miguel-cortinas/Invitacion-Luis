@@ -125,7 +125,7 @@ section {
 }
 
 .hero-logo {
-  width: 460px; max-width: 85%;
+  width: 460px; max-width: 100%;
   margin-bottom: 20px;
   filter: drop-shadow(0 0 24px rgba(170,255,0,0.4));
   animation: dinoEntrance 1s ease-out both;
