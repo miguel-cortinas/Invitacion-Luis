@@ -13,9 +13,10 @@ document.addEventListener('DOMContentLoaded', () => {
   if (musicBtn) musicBtn.addEventListener('click', toggleMusic);
 
   // ─── LÓGICA DE APERTURA (MÁQUINA DE ESTADOS) ────────────
+  // ─── LÓGICA DE APERTURA (MÁQUINA DE ESTADOS) ────────────
   let eggClicks = 0;
 
-  // Sintetizador para los crujidos de la cáscara (Toque 1 y 2)
+  // Sintetizador para los crujidos de la cáscara
   function playCrackSound(intensity) {
     try {
       const ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -32,7 +33,6 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch(e){}
   }
 
-  // Lógica del MP3 del Rugido Final
   function playRoar() {
     const roarAudio = document.getElementById('roar-sound');
     if (roarAudio) {
@@ -41,13 +41,10 @@ document.addEventListener('DOMContentLoaded', () => {
       roarAudio.play().catch(e => console.log("Autoplay del rugido bloqueado", e));
     }
     try {
-      if (navigator.vibrate) {
-        navigator.vibrate([200, 100, 400, 100, 600]); 
-      }
+      if (navigator.vibrate) navigator.vibrate([200, 100, 400, 100, 600]); 
     } catch(e){}
   }
 
-  // Controlador de los 3 estados del huevo
   // Controlador de los 3 estados del huevo
   function handleEggClick() {
     const egg = document.getElementById('egg');
@@ -58,7 +55,6 @@ document.addEventListener('DOMContentLoaded', () => {
     eggClicks++;
 
     if (eggClicks === 1) {
-      // ESTADO 1: Advertencia leve
       playCrackSound(1);
       egg.classList.add('shake-mild');
       crack.classList.add('crack-step-1');
@@ -66,7 +62,6 @@ document.addEventListener('DOMContentLoaded', () => {
       setTimeout(() => egg.classList.remove('shake-mild'), 300);
     } 
     else if (eggClicks === 2) {
-      // ESTADO 2: Punto crítico
       playCrackSound(2);
       egg.classList.add('shake-violent');
       crack.classList.replace('crack-step-1', 'crack-step-2');
@@ -74,30 +69,36 @@ document.addEventListener('DOMContentLoaded', () => {
       setTimeout(() => egg.classList.remove('shake-violent'), 400);
     } 
     else if (eggClicks >= 3) {
-      // ESTADO 3: Explosión y Transición
       egg.classList.add('shake-violent'); 
 
       setTimeout(() => {
-        // 1. HIT FRAME: Flashbang, Rugido y Confeti (Todo al mismo tiempo)
+        // 1. HIT FRAME: Ceguera blanca y Rugido (El Hilo Principal está ligero)
         if(flashbang) flashbang.style.opacity = '1'; 
         playRoar(); 
-        if(window.launchConfetti) window.launchConfetti(); // <-- Sincronizado aquí
 
-        // 2. Destrucción de la capa y despliegue del sitio
+        // 2. DESPEJE VISUAL: El confeti rompe la luz y el fondo negro se desvanece
         setTimeout(() => {
-          if(splash) splash.classList.add('hidden');
+          if(window.launchConfetti) window.launchConfetti(); // 100ms de retraso asegura fluidez
           if(flashbang) flashbang.style.opacity = '0'; 
+          if(splash) splash.classList.add('hidden'); // Inicia su transición CSS de 1.2s
+          startMusic();
+        }, 100);
 
+        // 3. REVELACIÓN CINEMÁTICA: 
+        // Diferimos 1.2 segundos para NO bloquear el procesador mientras el confeti cae.
+        // Esto crea el efecto de que el humo se disipa y luego aparece la invitación.
+        setTimeout(() => {
           const navDots = document.getElementById('nav-dots');
           if (navDots) navDots.classList.add('visible');
+          
           const footprints = document.getElementById('footprints');
           if (footprints) footprints.style.display='flex';
+          
           if(musicBtn) musicBtn.classList.add('visible');
 
-          startMusic();
-          initReveal(); 
+          initReveal(); // Ahora el renderizado del DOM no choca con la explosión
           startCountdown();
-        }, 150); // La ceguera blanca dura 150ms, pero el confeti ya está en el aire
+        }, 1200); 
 
       }, 250); 
     }
