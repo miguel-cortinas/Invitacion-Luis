@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Reproducir el archivo mp3
     const roarAudio = document.getElementById('roar-sound');
     if (roarAudio) {
-      roarAudio.volume = 1.0; 
+      roarAudio.volume = 0.3; 
       roarAudio.currentTime = 0; 
       roarAudio.play().catch(e => console.log("Autoplay del rugido bloqueado", e));
     }
