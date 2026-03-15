@@ -48,6 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Controlador de los 3 estados del huevo
+  // Controlador de los 3 estados del huevo
   function handleEggClick() {
     const egg = document.getElementById('egg');
     const crack = document.getElementById('crack-layer');
@@ -77,13 +78,13 @@ document.addEventListener('DOMContentLoaded', () => {
       egg.classList.add('shake-violent'); 
 
       setTimeout(() => {
-        // Efecto Flashbang y Rugido MP3
+        // 1. HIT FRAME: Flashbang, Rugido y Confeti (Todo al mismo tiempo)
         if(flashbang) flashbang.style.opacity = '1'; 
         playRoar(); 
+        if(window.launchConfetti) window.launchConfetti(); // <-- Sincronizado aquí
 
-        // Destrucción de la capa y despliegue del sitio
+        // 2. Destrucción de la capa y despliegue del sitio
         setTimeout(() => {
-          if(window.launchConfetti) window.launchConfetti();
           if(splash) splash.classList.add('hidden');
           if(flashbang) flashbang.style.opacity = '0'; 
 
@@ -96,7 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
           startMusic();
           initReveal(); 
           startCountdown();
-        }, 150); // Ceguera de 150ms
+        }, 150); // La ceguera blanca dura 150ms, pero el confeti ya está en el aire
 
       }, 250); 
     }
