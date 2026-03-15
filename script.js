@@ -1,6 +1,7 @@
 // Esperar a que el DOM cargue antes de añadir eventos
 document.addEventListener('DOMContentLoaded', () => {
-  const EVENT_DATE = new Date(2025, 6, 19, 15, 0, 0); // ⚠️ EDITAR: año, mes-1, día, hora, min
+  // El mes es 3 porque Abril es el cuarto mes (índice 0-3). Las horas usan formato 24h (3:00 PM = 15).
+  const EVENT_DATE = new Date(2026, 3, 18, 15, 0, 0); // ⚠️ EDITAR: año, mes-1, día, hora, min
 
   // Elementos del DOM
   const bgMusic = document.getElementById('bg-music');
@@ -34,11 +35,12 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch(e){}
   }
 
-  // Lógica del Confeti
+  // Lógica del Confeti Optimizado (Física de Explosión)
   const canvas = document.getElementById('confetti-canvas');
   if (canvas) {
     const ctx = canvas.getContext('2d');
     let particles = [], animId;
+    // Colores jurásicos
     const colors = ['#aaff00','#ffb300','#ff6f00','#4caf50','#e53935','#fff176','#80cbc4'];
     const emojis = ['🦖','🦕','🌿','🥚','⭐'];
 
@@ -47,30 +49,87 @@ document.addEventListener('DOMContentLoaded', () => {
     resize();
 
     function spawn(){
-      for(let i=0;i<120;i++){
-        const isEmoji=Math.random()<0.12;
-        particles.push({x:Math.random()*canvas.width,y:-20,vx:(Math.random()-0.5)*4,vy:Math.random()*4+2,
-          rot:Math.random()*360,rotV:(Math.random()-0.5)*8,size:isEmoji?18+Math.random()*12:8+Math.random()*8,
-          color:colors[Math.floor(Math.random()*colors.length)],emoji:isEmoji?emojis[Math.floor(Math.random()*emojis.length)]:null,alpha:1});
+      // 1. Calculamos el origen dinámico: el centro del huevo
+      const egg = document.getElementById('egg-wrap');
+      let originX = canvas.width / 2;
+      let originY = canvas.height / 2;
+
+      if (egg) {
+        const rect = egg.getBoundingClientRect();
+        originX = rect.left + rect.width / 2;
+        originY = rect.top + rect.height / 2;
+      }
+
+      // 2. Generamos las partículas con vectores de explosión
+      for(let i = 0; i < 150; i++){ // Aumentamos la densidad para mayor impacto
+        const isEmoji = Math.random() < 0.12;
+        
+        // Distribución radial aleatoria (360 grados)
+        const angle = Math.random() * Math.PI * 2;
+        const velocity = Math.random() * 20 + 5; // Fuerza de salida
+
+        particles.push({
+          x: originX,
+          y: originY,
+          vx: Math.cos(angle) * velocity, // Vector de velocidad en X
+          vy: (Math.sin(angle) * velocity) - 12, // Vector en Y (sesgado hacia arriba con el -12)
+          rot: Math.random() * 360,
+          rotV: (Math.random() - 0.5) * 15, // Rotación caótica sobre su propio eje
+          size: isEmoji ? 18 + Math.random() * 12 : 8 + Math.random() * 8,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          emoji: isEmoji ? emojis[Math.floor(Math.random() * emojis.length)] : null,
+          alpha: 1
+        });
       }
     }
 
     function draw(){
       ctx.clearRect(0,0,canvas.width,canvas.height);
-      particles=particles.filter(p=>p.alpha>0.05);
-      particles.forEach(p=>{
-        p.x+=p.vx; p.y+=p.vy; p.rot+=p.rotV;
-        if(p.y>canvas.height*0.7) p.alpha-=0.02;
-        ctx.save(); ctx.globalAlpha=p.alpha; ctx.translate(p.x,p.y); ctx.rotate(p.rot*Math.PI/180);
-        if(p.emoji){ctx.font=`${p.size}px serif`;ctx.fillText(p.emoji,-p.size/2,p.size/2);}
-        else{ctx.fillStyle=p.color;ctx.fillRect(-p.size/2,-p.size/4,p.size,p.size/2);}
+      // Limpiamos la memoria destruyendo partículas invisibles
+      particles = particles.filter(p => p.alpha > 0.05);
+
+      particles.forEach(p => {
+        // 3. Aplicamos variables físicas al entorno de cada frame
+        p.vy += 0.8; // Fuerza de Gravedad constante hacia abajo
+        p.vx *= 0.97; // Fricción del aire horizontal (desaceleración)
+        p.vy *= 0.98; // Fricción del aire vertical
+
+        p.x += p.vx; 
+        p.y += p.vy; 
+        p.rot += p.rotV;
+
+        // Desvanecimiento suave (fade out) conforme empiezan a caer
+        if(p.vy > 3) p.alpha -= 0.015;
+
+        ctx.save(); 
+        ctx.globalAlpha = Math.max(0, p.alpha); // Evitamos valores negativos
+        ctx.translate(p.x, p.y); 
+        ctx.rotate(p.rot * Math.PI / 180);
+        
+        // Renderizado
+        if(p.emoji){
+          ctx.font = `${p.size}px serif`;
+          ctx.fillText(p.emoji, -p.size/2, p.size/2);
+        } else {
+          ctx.fillStyle = p.color;
+          ctx.fillRect(-p.size/2, -p.size/4, p.size, p.size/2);
+        }
         ctx.restore();
       });
-      if(particles.length>0) animId=requestAnimationFrame(draw);
-      else ctx.clearRect(0,0,canvas.width,canvas.height);
+
+      // Ciclo de animación
+      if(particles.length > 0) {
+        animId = requestAnimationFrame(draw);
+      } else {
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+      }
     }
 
-    window.launchConfetti = function(){ spawn(); cancelAnimationFrame(animId); draw(); };
+    window.launchConfetti = function(){ 
+      spawn(); 
+      cancelAnimationFrame(animId); 
+      draw(); 
+    };
   }
 
   // ─── MÚSICA ─────────────────────────────────────────────
