@@ -1,36 +1,105 @@
 // Esperar a que el DOM cargue antes de añadir eventos
 document.addEventListener('DOMContentLoaded', () => {
   // ⚠️ FECHA DEL EVENTO: 18 de Abril de 2026 a las 15:00 (3:00 PM)
-  // Recuerda: Enero es 0, Febrero es 1, Marzo es 2, Abril es 3.
   const EVENT_DATE = new Date(2026, 3, 18, 15, 0, 0); 
 
   // Elementos del DOM
   const bgMusic = document.getElementById('bg-music');
   const musicBtn = document.getElementById('music-btn');
-  const openBtn = document.getElementById('open-btn');
   const eggWrap = document.getElementById('egg-wrap');
 
-  // Asignar eventos a los botones
-  if (openBtn) openBtn.addEventListener('click', openInvitation);
-  if (eggWrap) eggWrap.addEventListener('click', openInvitation);
+  // Asignar eventos a los elementos interactivos
+  if (eggWrap) eggWrap.addEventListener('click', handleEggClick);
   if (musicBtn) musicBtn.addEventListener('click', toggleMusic);
 
-  // ─── LÓGICA DEL RUGIDO (AUDIO REAL) ───
+  // ─── LÓGICA DE APERTURA (MÁQUINA DE ESTADOS) ────────────
+  let eggClicks = 0;
+
+  // Sintetizador para los crujidos de la cáscara (Toque 1 y 2)
+  function playCrackSound(intensity) {
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(intensity === 1 ? 150 : 80, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(10, ctx.currentTime + 0.15);
+      gain.gain.setValueAtTime(0.6, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.15);
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.start(); osc.stop(ctx.currentTime + 0.15);
+      if(navigator.vibrate) navigator.vibrate(intensity === 1 ? 50 : 150);
+    } catch(e){}
+  }
+
+  // Lógica del MP3 del Rugido Final
   function playRoar() {
-    // Reproducir el archivo mp3
     const roarAudio = document.getElementById('roar-sound');
     if (roarAudio) {
-      roarAudio.volume = 0.3; 
+      roarAudio.volume = 1.0; 
       roarAudio.currentTime = 0; 
       roarAudio.play().catch(e => console.log("Autoplay del rugido bloqueado", e));
     }
-
-    // Vibración háptica en celulares
     try {
       if (navigator.vibrate) {
         navigator.vibrate([200, 100, 400, 100, 600]); 
       }
     } catch(e){}
+  }
+
+  // Controlador de los 3 estados del huevo
+  function handleEggClick() {
+    const egg = document.getElementById('egg');
+    const crack = document.getElementById('crack-layer');
+    const splash = document.getElementById('splash');
+    const flashbang = document.getElementById('flashbang');
+
+    eggClicks++;
+
+    if (eggClicks === 1) {
+      // ESTADO 1: Advertencia leve
+      playCrackSound(1);
+      egg.classList.add('shake-mild');
+      crack.classList.add('crack-step-1');
+      egg.style.filter = 'drop-shadow(0 0 20px rgba(170,255,0,0.4))'; 
+      setTimeout(() => egg.classList.remove('shake-mild'), 300);
+    } 
+    else if (eggClicks === 2) {
+      // ESTADO 2: Punto crítico
+      playCrackSound(2);
+      egg.classList.add('shake-violent');
+      crack.classList.replace('crack-step-1', 'crack-step-2');
+      egg.style.filter = 'drop-shadow(0 0 35px rgba(255,179,0,0.7))'; 
+      setTimeout(() => egg.classList.remove('shake-violent'), 400);
+    } 
+    else if (eggClicks >= 3) {
+      // ESTADO 3: Explosión y Transición
+      egg.classList.add('shake-violent'); 
+
+      setTimeout(() => {
+        // Efecto Flashbang y Rugido MP3
+        if(flashbang) flashbang.style.opacity = '1'; 
+        playRoar(); 
+
+        // Destrucción de la capa y despliegue del sitio
+        setTimeout(() => {
+          if(window.launchConfetti) window.launchConfetti();
+          if(splash) splash.classList.add('hidden');
+          if(flashbang) flashbang.style.opacity = '0'; 
+
+          const navDots = document.getElementById('nav-dots');
+          if (navDots) navDots.classList.add('visible');
+          const footprints = document.getElementById('footprints');
+          if (footprints) footprints.style.display='flex';
+          if(musicBtn) musicBtn.classList.add('visible');
+
+          startMusic();
+          initReveal(); 
+          startCountdown();
+        }, 150); // Ceguera de 150ms
+
+      }, 250); 
+    }
   }
 
   // ─── LÓGICA DEL CONFETI OPTIMIZADO (FÍSICA DE EXPLOSIÓN) ───
@@ -49,10 +118,7 @@ document.addEventListener('DOMContentLoaded', () => {
     resize();
 
     function spawn(){
-      // Recálculo clave para pantallas móviles
       resize(); 
-
-      // Calculamos el origen dinámico: el centro del huevo
       const egg = document.getElementById('egg-wrap');
       let originX = canvas.width / 2;
       let originY = canvas.height / 2;
@@ -139,9 +205,7 @@ document.addEventListener('DOMContentLoaded', () => {
         bgMusic.volume = vol;
         if (vol >= 0.55) clearInterval(fade);
       }, 100);
-    }).catch(() => {
-      // Autoplay bloqueado — el usuario pulsa el botón manualmente
-    });
+    }).catch(() => {});
   }
 
   function toggleMusic() {
@@ -153,44 +217,6 @@ document.addEventListener('DOMContentLoaded', () => {
       bgMusic.pause();
       musicBtn.classList.remove('playing');
     }
-  }
-
-  // ─── LÓGICA DE APERTURA ─────────────────────────────────
-  function openInvitation() {
-    const egg=document.getElementById('egg');
-    const fog=document.getElementById('fog-overlay'), splash=document.getElementById('splash');
-    
-    if(egg) egg.classList.add('shake');
-    
-    setTimeout(()=>{ 
-      if(egg) egg.classList.remove('shake'); 
-      if(eggWrap) eggWrap.classList.add('cracking'); 
-    },600);
-    
-    setTimeout(()=>{ 
-      playRoar(); // Ejecuta el audio del rugido y la vibración
-      if(window.launchConfetti) window.launchConfetti(); 
-    },1000);
-    
-    setTimeout(()=>{ 
-      if(fog) fog.classList.add('active'); 
-    },1600);
-    
-    setTimeout(()=>{
-      if(splash) splash.classList.add('hidden'); 
-      if(fog) fog.classList.remove('active');
-      
-      const navDots = document.getElementById('nav-dots');
-      if (navDots) navDots.classList.add('visible');
-      
-      const footprints = document.getElementById('footprints');
-      if (footprints) footprints.style.display='flex';
-      
-      if(musicBtn) musicBtn.classList.add('visible');
-      startMusic();
-      initReveal(); 
-      startCountdown();
-    },2600);
   }
 
   // ─── INTERSECTION OBSERVER (REVEAL ANIMATIONS) ──────────
@@ -221,7 +247,7 @@ document.addEventListener('DOMContentLoaded', () => {
     update(); setInterval(update,1000);
   }
 
-  // ─── NAVEGACIÓN CON DOTS LATERAELS ──────────────────────
+  // ─── NAVEGACIÓN CON DOTS LATERALES ──────────────────────
   const sections=['inicio','invitacion','detalles','contador','ubicacion','vestimenta','confirmacion'];
   const dots=document.querySelectorAll('.nav-dot');
   

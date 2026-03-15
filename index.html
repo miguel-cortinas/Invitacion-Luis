@@ -62,6 +62,8 @@
   </svg>
 
   <div id="splash">
+    <div id="flashbang" style="position:fixed;inset:0;background:#ffffff;z-index:10000;opacity:0;pointer-events:none;transition:opacity 0.15s ease-out;"></div>
+
     <div class="egg-container" id="egg-wrap">
       <div class="egg" id="egg">
         <svg viewBox="0 0 160 190" xmlns="http://www.w3.org/2000/svg">
@@ -81,7 +83,8 @@
             <animate attributeName="opacity" values="0.5;0" dur="2s" repeatCount="indefinite"/>
           </ellipse>
         </svg>
-        <div class="egg-crack">
+        
+        <div class="egg-crack" id="crack-layer">
           <svg viewBox="0 0 160 190" xmlns="http://www.w3.org/2000/svg" style="position:absolute;inset:0;width:100%;height:100%">
             <polyline points="80,60 70,90 85,110 75,140" fill="none" stroke="#000" stroke-width="3" stroke-linecap="round" opacity=".7"/>
             <polyline points="80,60 95,85 88,105 100,130" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" opacity=".7"/>
@@ -91,8 +94,7 @@
       </div>
     </div>
     <p id="splash-title">¡¿LISTO PARA SOBREVIVIR?!</p>
-    <p id="splash-sub">Toca el huevo o presiona el botón 🦕</p>
-    <button id="open-btn">🦖 ABRIR INVITACIÓN 🦖</button>
+    <p id="splash-sub" class="pulse-text">Toca el huevo para liberarlo...</p>
   </div>
 
   <nav id="nav-dots">
