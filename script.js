@@ -15,24 +15,21 @@ document.addEventListener('DOMContentLoaded', () => {
   if (eggWrap) eggWrap.addEventListener('click', openInvitation);
   if (musicBtn) musicBtn.addEventListener('click', toggleMusic);
 
+  // ─── LÓGICA DEL RUGIDO (AUDIO REAL) ───
   function playRoar() {
+    // Reproducir el archivo mp3
+    const roarAudio = document.getElementById('roar-sound');
+    if (roarAudio) {
+      roarAudio.volume = 1.0; 
+      roarAudio.currentTime = 0; 
+      roarAudio.play().catch(e => console.log("Autoplay del rugido bloqueado", e));
+    }
+
+    // Vibración háptica en celulares
     try {
-      const ctx = new (window.AudioContext || window.webkitAudioContext)();
-      const now = ctx.currentTime;
-      const makeLayer = (freq, type, gainVal, dur, freqEnd) => {
-        const osc = ctx.createOscillator(), gain = ctx.createGain(), filter = ctx.createBiquadFilter();
-        osc.type = type; osc.frequency.setValueAtTime(freq, now);
-        if (freqEnd) osc.frequency.exponentialRampToValueAtTime(freqEnd, now + dur);
-        filter.type = 'lowpass'; filter.frequency.value = 800;
-        gain.gain.setValueAtTime(0, now);
-        gain.gain.linearRampToValueAtTime(gainVal, now + 0.1);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + dur);
-        osc.connect(filter); filter.connect(gain); gain.connect(ctx.destination);
-        osc.start(now); osc.stop(now + dur);
-      };
-      makeLayer(80,'sawtooth',0.35,2.0,30); makeLayer(120,'sawtooth',0.25,1.8,50);
-      makeLayer(200,'square',0.15,1.5,80);  makeLayer(45,'sine',0.4,2.5,20);
-      if (navigator.vibrate) navigator.vibrate([200,100,400,100,600]);
+      if (navigator.vibrate) {
+        navigator.vibrate([200, 100, 400, 100, 600]); 
+      }
     } catch(e){}
   }
 
@@ -130,7 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
   }
 
-  // ─── MÚSICA ─────────────────────────────────────────────
+  // ─── MÚSICA DE FONDO ────────────────────────────────────
   function startMusic() {
     if (!bgMusic) return;
     bgMusic.volume = 0;
@@ -171,7 +168,7 @@ document.addEventListener('DOMContentLoaded', () => {
     },600);
     
     setTimeout(()=>{ 
-      playRoar(); 
+      playRoar(); // Ejecuta el audio del rugido y la vibración
       if(window.launchConfetti) window.launchConfetti(); 
     },1000);
     
@@ -196,7 +193,7 @@ document.addEventListener('DOMContentLoaded', () => {
     },2600);
   }
 
-  // ─── INTERSECTION OBSERVER (REVEAL) ─────────────────────
+  // ─── INTERSECTION OBSERVER (REVEAL ANIMATIONS) ──────────
   function initReveal(){
     const obs=new IntersectionObserver(entries=>entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('visible'); }),{threshold:0.15});
     document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
@@ -224,7 +221,7 @@ document.addEventListener('DOMContentLoaded', () => {
     update(); setInterval(update,1000);
   }
 
-  // ─── NAVEGACIÓN CON DOTS ────────────────────────────────
+  // ─── NAVEGACIÓN CON DOTS LATERAELS ──────────────────────
   const sections=['inicio','invitacion','detalles','contador','ubicacion','vestimenta','confirmacion'];
   const dots=document.querySelectorAll('.nav-dot');
   
