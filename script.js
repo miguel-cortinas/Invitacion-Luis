@@ -1,7 +1,8 @@
 // Esperar a que el DOM cargue antes de añadir eventos
 document.addEventListener('DOMContentLoaded', () => {
-  // El mes es 3 porque Abril es el cuarto mes (índice 0-3). Las horas usan formato 24h (3:00 PM = 15).
-  const EVENT_DATE = new Date(2026, 3, 18, 15, 0, 0); // ⚠️ EDITAR: año, mes-1, día, hora, min
+  // ⚠️ FECHA DEL EVENTO: 18 de Abril de 2026 a las 15:00 (3:00 PM)
+  // Recuerda: Enero es 0, Febrero es 1, Marzo es 2, Abril es 3.
+  const EVENT_DATE = new Date(2026, 3, 18, 15, 0, 0); 
 
   // Elementos del DOM
   const bgMusic = document.getElementById('bg-music');
@@ -9,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const openBtn = document.getElementById('open-btn');
   const eggWrap = document.getElementById('egg-wrap');
 
-  // Asignar eventos a los botones (reemplaza los onclick del HTML)
+  // Asignar eventos a los botones
   if (openBtn) openBtn.addEventListener('click', openInvitation);
   if (eggWrap) eggWrap.addEventListener('click', openInvitation);
   if (musicBtn) musicBtn.addEventListener('click', toggleMusic);
@@ -35,21 +36,26 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch(e){}
   }
 
-  // Lógica del Confeti Optimizado (Física de Explosión)
+  // ─── LÓGICA DEL CONFETI OPTIMIZADO (FÍSICA DE EXPLOSIÓN) ───
   const canvas = document.getElementById('confetti-canvas');
   if (canvas) {
     const ctx = canvas.getContext('2d');
     let particles = [], animId;
-    // Colores jurásicos
     const colors = ['#aaff00','#ffb300','#ff6f00','#4caf50','#e53935','#fff176','#80cbc4'];
     const emojis = ['🦖','🦕','🌿','🥚','⭐'];
 
-    function resize(){ canvas.width=window.innerWidth; canvas.height=window.innerHeight; }
+    function resize(){ 
+      canvas.width = window.innerWidth; 
+      canvas.height = window.innerHeight; 
+    }
     window.addEventListener('resize', resize); 
     resize();
 
     function spawn(){
-      // 1. Calculamos el origen dinámico: el centro del huevo
+      // Recálculo clave para pantallas móviles
+      resize(); 
+
+      // Calculamos el origen dinámico: el centro del huevo
       const egg = document.getElementById('egg-wrap');
       let originX = canvas.width / 2;
       let originY = canvas.height / 2;
@@ -60,21 +66,18 @@ document.addEventListener('DOMContentLoaded', () => {
         originY = rect.top + rect.height / 2;
       }
 
-      // 2. Generamos las partículas con vectores de explosión
-      for(let i = 0; i < 150; i++){ // Aumentamos la densidad para mayor impacto
+      for(let i = 0; i < 150; i++){
         const isEmoji = Math.random() < 0.12;
-        
-        // Distribución radial aleatoria (360 grados)
         const angle = Math.random() * Math.PI * 2;
-        const velocity = Math.random() * 20 + 5; // Fuerza de salida
+        const velocity = Math.random() * 20 + 5;
 
         particles.push({
           x: originX,
           y: originY,
-          vx: Math.cos(angle) * velocity, // Vector de velocidad en X
-          vy: (Math.sin(angle) * velocity) - 12, // Vector en Y (sesgado hacia arriba con el -12)
+          vx: Math.cos(angle) * velocity,
+          vy: (Math.sin(angle) * velocity) - 12,
           rot: Math.random() * 360,
-          rotV: (Math.random() - 0.5) * 15, // Rotación caótica sobre su propio eje
+          rotV: (Math.random() - 0.5) * 15,
           size: isEmoji ? 18 + Math.random() * 12 : 8 + Math.random() * 8,
           color: colors[Math.floor(Math.random() * colors.length)],
           emoji: isEmoji ? emojis[Math.floor(Math.random() * emojis.length)] : null,
@@ -85,28 +88,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function draw(){
       ctx.clearRect(0,0,canvas.width,canvas.height);
-      // Limpiamos la memoria destruyendo partículas invisibles
       particles = particles.filter(p => p.alpha > 0.05);
 
       particles.forEach(p => {
-        // 3. Aplicamos variables físicas al entorno de cada frame
-        p.vy += 0.8; // Fuerza de Gravedad constante hacia abajo
-        p.vx *= 0.97; // Fricción del aire horizontal (desaceleración)
-        p.vy *= 0.98; // Fricción del aire vertical
+        p.vy += 0.8; 
+        p.vx *= 0.97; 
+        p.vy *= 0.98; 
 
         p.x += p.vx; 
         p.y += p.vy; 
         p.rot += p.rotV;
 
-        // Desvanecimiento suave (fade out) conforme empiezan a caer
         if(p.vy > 3) p.alpha -= 0.015;
 
         ctx.save(); 
-        ctx.globalAlpha = Math.max(0, p.alpha); // Evitamos valores negativos
+        ctx.globalAlpha = Math.max(0, p.alpha); 
         ctx.translate(p.x, p.y); 
         ctx.rotate(p.rot * Math.PI / 180);
         
-        // Renderizado
         if(p.emoji){
           ctx.font = `${p.size}px serif`;
           ctx.fillText(p.emoji, -p.size/2, p.size/2);
@@ -117,7 +116,6 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.restore();
       });
 
-      // Ciclo de animación
       if(particles.length > 0) {
         animId = requestAnimationFrame(draw);
       } else {
@@ -160,6 +158,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  // ─── LÓGICA DE APERTURA ─────────────────────────────────
   function openInvitation() {
     const egg=document.getElementById('egg');
     const fog=document.getElementById('fog-overlay'), splash=document.getElementById('splash');
@@ -197,11 +196,13 @@ document.addEventListener('DOMContentLoaded', () => {
     },2600);
   }
 
+  // ─── INTERSECTION OBSERVER (REVEAL) ─────────────────────
   function initReveal(){
     const obs=new IntersectionObserver(entries=>entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('visible'); }),{threshold:0.15});
     document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
   }
 
+  // ─── CONTADOR REGRESIVO ─────────────────────────────────
   function startCountdown(){
     const display = document.getElementById('countdown-display');
     const doneMsg = document.getElementById('countdown-done');
@@ -223,7 +224,7 @@ document.addEventListener('DOMContentLoaded', () => {
     update(); setInterval(update,1000);
   }
 
-  // Navegación con dots
+  // ─── NAVEGACIÓN CON DOTS ────────────────────────────────
   const sections=['inicio','invitacion','detalles','contador','ubicacion','vestimenta','confirmacion'];
   const dots=document.querySelectorAll('.nav-dot');
   

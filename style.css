@@ -72,7 +72,15 @@ body {
 #open-btn::after { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(255,255,255,0.25), transparent); }
 
 /* ========== OVERLAYS ========== */
-#confetti-canvas { position: fixed; inset: 0; pointer-events: none; z-index: 9998; }
+#confetti-canvas { 
+  position: fixed; 
+  top: 0; 
+  left: 0; 
+  width: 100%; 
+  height: 100%; 
+  pointer-events: none; 
+  z-index: 10000; 
+}
 #fog-overlay { position: fixed; inset: 0; background: #0d1f0d; z-index: 9997; opacity: 0; pointer-events: none; transition: opacity 0.8s ease; }
 #fog-overlay.active { opacity: 1; }
 
