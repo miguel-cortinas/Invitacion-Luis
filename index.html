@@ -137,7 +137,7 @@
 
     /* --- Logo PNG --- */
     .hero-logo {
-      width: 200px; max-width: 85%;
+      width: 260px; max-width: 85%;
       margin-bottom: 20px;
       filter: drop-shadow(0 0 24px rgba(170,255,0,0.4));
       animation: dinoEntrance 1s ease-out both;
@@ -179,10 +179,16 @@
     }
     .hero-age {
       font-family: 'Bebas Neue', sans-serif;
-      font-size: clamp(4rem, 18vw, 8rem); color: transparent;
-      -webkit-text-stroke: 3px var(--acid); opacity: 0.25;
-      position: absolute; bottom: 30px; right: -10px;
-      line-height: 1; pointer-events: none;
+      font-size: clamp(3.5rem, 16vw, 7rem);
+      color: transparent;
+      -webkit-text-stroke: 3px var(--acid);
+      opacity: 0.55;
+      line-height: 1;
+      margin-top: 6px;
+      display: block;
+      text-align: center;
+      filter: drop-shadow(0 0 14px rgba(170,255,0,0.3));
+      letter-spacing: 4px;
     }
     .scroll-hint {
       margin-top: 40px; font-size: 0.8rem; color: rgba(255,255,255,0.35);
@@ -249,7 +255,7 @@
 
     /* ========== SECTION PNG IMAGES ========== */
     .section-img {
-      width: 160px; max-width: 70%;
+      width: 220px; max-width: 90%;
       display: block; margin: 0 auto 18px;
       filter: drop-shadow(0 0 18px rgba(170,255,0,0.25));
       animation: dinoEntrance 0.7s ease-out both;
@@ -293,7 +299,7 @@
 
     /* --- Dino PNG en confirmación --- */
     .confirm-dino-img {
-      width: 150px; max-width: 65%;
+      width: 220px; max-width: 65%;
       margin: 0 auto 14px;
       display: block;
       filter: drop-shadow(0 0 18px rgba(170,255,0,0.3));
@@ -342,9 +348,88 @@
     .footprints span:nth-child(2) { animation-delay: 0.3s; }
     .footprints span:nth-child(3) { animation-delay: 0.6s; }
     @keyframes step { 0%,100% { opacity: 0.1; transform: scale(0.8); } 50% { opacity: 0.5; transform: scale(1.1); } }
+    /* ========== MUSIC BUTTON ========== */
+    #music-btn {
+      position: fixed;
+      bottom: 24px; right: 20px;
+      width: 52px; height: 52px;
+      border-radius: 50%;
+      background: rgba(13, 31, 13, 0.85);
+      border: 2px solid rgba(170,255,0,0.5);
+      box-shadow: 0 0 18px rgba(170,255,0,0.3), 0 4px 16px rgba(0,0,0,0.5);
+      cursor: pointer;
+      display: none;
+      align-items: center; justify-content: center;
+      z-index: 200;
+      transition: transform 0.2s, box-shadow 0.2s, border-color 0.3s;
+      backdrop-filter: blur(8px);
+    }
+    #music-btn.visible { display: flex; }
+    #music-btn:active { transform: scale(0.92); }
+    #music-btn.playing {
+      border-color: var(--acid);
+      box-shadow: 0 0 24px rgba(170,255,0,0.55), 0 4px 16px rgba(0,0,0,0.5);
+      animation: musicPulse 2s ease-in-out infinite;
+    }
+    @keyframes musicPulse {
+      0%,100% { box-shadow: 0 0 18px rgba(170,255,0,0.4), 0 4px 16px rgba(0,0,0,0.5); }
+      50%      { box-shadow: 0 0 32px rgba(170,255,0,0.7), 0 4px 16px rgba(0,0,0,0.5); }
+    }
+    /* Notas musicales animadas */
+    #music-btn .note {
+      position: absolute;
+      font-size: 0.85rem;
+      opacity: 0;
+      pointer-events: none;
+      animation: none;
+    }
+    #music-btn.playing .note { animation: floatNote 2.4s ease-in-out infinite; }
+    #music-btn.playing .note:nth-child(2) { animation-delay: 0.8s; }
+    #music-btn.playing .note:nth-child(3) { animation-delay: 1.6s; }
+    @keyframes floatNote {
+      0%   { opacity: 0; transform: translate(0, 0) scale(0.7); }
+      30%  { opacity: 1; }
+      100% { opacity: 0; transform: translate(var(--nx, 14px), -28px) scale(1.1); }
+    }
+    .note:nth-child(1) { --nx: 10px;  top: -2px; left: 28px; }
+    .note:nth-child(2) { --nx: -10px; top: -4px; left: 14px; }
+    .note:nth-child(3) { --nx: 16px;  top: 2px;  left: 22px; }
+
+    /* Icono play/pause SVG */
+    #music-btn .icon-play  { display: block; }
+    #music-btn .icon-pause { display: none;  }
+    #music-btn.playing .icon-play  { display: none;  }
+    #music-btn.playing .icon-pause { display: block; }
+
   </style>
 </head>
 <body class="jungle-bg">
+
+  <!-- MÚSICA -->
+  <audio id="bg-music" loop preload="auto">
+    <!--
+      Agrega aquí el src de tu canción. Formatos recomendados: mp3 u ogg.
+      Ejemplo: <source src="music/jurassic.mp3" type="audio/mpeg" />
+      Puedes usar cualquier canción temática de Jurassic Park.
+    -->
+    <source src="music/musica.mp3" type="audio/mpeg" />
+  </audio>
+
+  <!-- BOTÓN PLAY/PAUSE -->
+  <button id="music-btn" aria-label="Música" onclick="toggleMusic()">
+    <span class="note">♪</span>
+    <span class="note">♫</span>
+    <span class="note">♩</span>
+    <!-- Icono play -->
+    <svg class="icon-play" width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M8 5.5v13l11-6.5L8 5.5z" fill="#aaff00"/>
+    </svg>
+    <!-- Icono pause -->
+    <svg class="icon-pause" width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="6"  y="5" width="4" height="14" rx="1.5" fill="#aaff00"/>
+      <rect x="14" y="5" width="4" height="14" rx="1.5" fill="#aaff00"/>
+    </svg>
+  </button>
 
   <canvas id="confetti-canvas"></canvas>
   <div id="fog-overlay"></div>
@@ -425,10 +510,10 @@
       <div class="section-label">Bienvenido al</div>
       <h1>CUMPLEAÑOS<br>JURÁSICO</h1>
       <div class="hero-name">¡Nombre del Cumpleañero!</div><!-- EDITAR -->
-      <p style="color:rgba(255,255,255,0.5);font-size:0.9rem;margin-top:4px;">Te invita a su celebración prehistórica</p>
+      <div class="hero-age">5</div><!-- EDITAR EDAD -->
+      <p style="color:rgba(255,255,255,0.5);font-size:0.9rem;margin-top:10px;">Te invita a su celebración prehistórica</p>
     </div>
 
-    <div class="hero-age reveal">5</div><!-- EDITAR EDAD -->
     <p class="scroll-hint reveal">↓ desliza para explorar ↓</p>
   </section>
 
@@ -683,6 +768,35 @@
     window.launchConfetti=function(){ spawn(); cancelAnimationFrame(animId); draw(); };
   })();
 
+  // ─── MÚSICA ─────────────────────────────────────────────
+  const bgMusic  = document.getElementById('bg-music');
+  const musicBtn = document.getElementById('music-btn');
+
+  function startMusic() {
+    bgMusic.volume = 0;
+    bgMusic.play().then(() => {
+      musicBtn.classList.add('playing');
+      let vol = 0;
+      const fade = setInterval(() => {
+        vol = Math.min(vol + 0.035, 0.55);
+        bgMusic.volume = vol;
+        if (vol >= 0.55) clearInterval(fade);
+      }, 100);
+    }).catch(() => {
+      // Autoplay bloqueado — el usuario pulsa el botón manualmente
+    });
+  }
+
+  function toggleMusic() {
+    if (bgMusic.paused) {
+      bgMusic.play();
+      musicBtn.classList.add('playing');
+    } else {
+      bgMusic.pause();
+      musicBtn.classList.remove('playing');
+    }
+  }
+
   function openInvitation(){
     const egg=document.getElementById('egg'), eggWrap=document.getElementById('egg-wrap');
     const fog=document.getElementById('fog-overlay'), splash=document.getElementById('splash');
@@ -694,6 +808,8 @@
       splash.classList.add('hidden'); fog.classList.remove('active');
       document.getElementById('nav-dots').classList.add('visible');
       document.getElementById('footprints').style.display='flex';
+      musicBtn.classList.add('visible');
+      startMusic();
       initReveal(); startCountdown();
     },2600);
   }
