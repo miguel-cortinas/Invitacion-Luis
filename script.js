@@ -13,10 +13,9 @@ document.addEventListener('DOMContentLoaded', () => {
   if (musicBtn) musicBtn.addEventListener('click', toggleMusic);
 
   // ─── LÓGICA DE APERTURA (MÁQUINA DE ESTADOS) ────────────
-  // ─── LÓGICA DE APERTURA (MÁQUINA DE ESTADOS) ────────────
   let eggClicks = 0;
 
-  // Sintetizador para los crujidos de la cáscara
+  // Sintetizador para los crujidos de la cáscara (Toque 1 y 2)
   function playCrackSound(intensity) {
     try {
       const ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -33,15 +32,18 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch(e){}
   }
 
+  // Lógica del MP3 del Rugido Final
   function playRoar() {
     const roarAudio = document.getElementById('roar-sound');
     if (roarAudio) {
-      roarAudio.volume = 0.3; 
+      roarAudio.volume = 1.0; 
       roarAudio.currentTime = 0; 
       roarAudio.play().catch(e => console.log("Autoplay del rugido bloqueado", e));
     }
     try {
-      if (navigator.vibrate) navigator.vibrate([200, 100, 400, 100, 600]); 
+      if (navigator.vibrate) {
+        navigator.vibrate([200, 100, 400, 100, 600]); 
+      }
     } catch(e){}
   }
 
@@ -55,6 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
     eggClicks++;
 
     if (eggClicks === 1) {
+      // ESTADO 1: Advertencia leve
       playCrackSound(1);
       egg.classList.add('shake-mild');
       crack.classList.add('crack-step-1');
@@ -62,6 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
       setTimeout(() => egg.classList.remove('shake-mild'), 300);
     } 
     else if (eggClicks === 2) {
+      // ESTADO 2: Punto crítico
       playCrackSound(2);
       egg.classList.add('shake-violent');
       crack.classList.replace('crack-step-1', 'crack-step-2');
@@ -69,34 +73,36 @@ document.addEventListener('DOMContentLoaded', () => {
       setTimeout(() => egg.classList.remove('shake-violent'), 400);
     } 
     else if (eggClicks >= 3) {
+      // ESTADO 3: Explosión y Transición
       egg.classList.add('shake-violent'); 
 
       setTimeout(() => {
-        // 1. HIT FRAME: Ceguera blanca y Rugido (El Hilo Principal está ligero)
+        // 1. HIT FRAME: Flashbang, Rugido y Confeti simultáneos
         if(flashbang) flashbang.style.opacity = '1'; 
         playRoar(); 
 
-        // 2. DESPEJE VISUAL: El confeti rompe la luz y el fondo negro se desvanece
+        // 2. DESPEJE VISUAL: 
         setTimeout(() => {
-          if(window.launchConfetti) window.launchConfetti(); // 100ms de retraso asegura fluidez
+          if(window.launchConfetti) window.launchConfetti(); 
           if(flashbang) flashbang.style.opacity = '0'; 
-          if(splash) splash.classList.add('hidden'); // Inicia su transición CSS de 1.2s
+          if(splash) splash.classList.add('hidden'); 
           startMusic();
         }, 100);
 
-        // 3. REVELACIÓN CINEMÁTICA: 
-        // Diferimos 1.2 segundos para NO bloquear el procesador mientras el confeti cae.
-        // Esto crea el efecto de que el humo se disipa y luego aparece la invitación.
+        // 3. REVELACIÓN CINEMÁTICA EN CASCADA:
         setTimeout(() => {
+          const heroContent = document.getElementById('hero-content');
+          const heroScroll = document.getElementById('hero-scroll');
+          if (heroContent) heroContent.classList.add('play-cinematic');
+          if (heroScroll) heroScroll.classList.add('play-cinematic');
+
           const navDots = document.getElementById('nav-dots');
           if (navDots) navDots.classList.add('visible');
-          
           const footprints = document.getElementById('footprints');
           if (footprints) footprints.style.display='flex';
-          
           if(musicBtn) musicBtn.classList.add('visible');
 
-          initReveal(); // Ahora el renderizado del DOM no choca con la explosión
+          initReveal(); 
           startCountdown();
         }, 1200); 
 
