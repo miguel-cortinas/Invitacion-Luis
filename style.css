@@ -148,7 +148,7 @@ section {
 #hero-content.play-cinematic .hero-logo {
   animation: heroLogoPop 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
 }
-.hero-logo { width: 260px; max-width: 85%; margin-bottom: 20px; opacity: 0; filter: drop-shadow(0 0 24px rgba(170,255,0,0.4)); }
+.hero-logo { width: 360px; max-width: 100%; margin-bottom: 20px; opacity: 0; filter: drop-shadow(0 0 24px rgba(170,255,0,0.4)); }
 
 #hero-content.play-cinematic h1 {
   opacity: 0; transform: translateY(30px);
@@ -300,7 +300,7 @@ section {
 .confirm-card { max-width: 360px; width: 100%; }
 
 .confirm-dino-img {
-  width: 220px; max-width: 65%;
+  width: 220px; max-width: 85%;
   margin: 0 auto 14px;
   display: block;
   filter: drop-shadow(0 0 18px rgba(170,255,0,0.3));
