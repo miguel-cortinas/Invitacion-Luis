@@ -256,7 +256,8 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ─── NAVEGACIÓN CON DOTS LATERALES ──────────────────────
-  const sections=['inicio','invitacion','detalles','contador','ubicacion','vestimenta','confirmacion'];
+  // IMPORTANTE: Aquí se registra la sección 'after' para el menú
+  const sections=['inicio','invitacion','detalles','contador','ubicacion','after','vestimenta','confirmacion'];
   const dots=document.querySelectorAll('.nav-dot');
   
   dots.forEach(d=>d.addEventListener('click',()=> {

@@ -262,8 +262,11 @@ section {
 .map-placeholder .icon { font-size: 2.5rem; }
 .map-btn { display: inline-flex; align-items: center; gap: 8px; background: linear-gradient(135deg, #1565c0, #0d47a1); color: #fff; text-decoration: none; padding: 12px 24px; border-radius: 50px; font-weight: 700; font-size: 0.9rem; margin-top: 14px; box-shadow: 0 4px 20px rgba(21,101,192,0.4); }
 
+/* ========== AFTER PARTY (NUEVO FONDO) ========== */
+#after { background: linear-gradient(180deg, #1a3a1a 0%, #0d2a14 100%); }
+
 /* ========== VESTIMENTA ========== */
-#vestimenta { background: linear-gradient(180deg, #1a3a1a 0%, #0d1f0d 100%); }
+#vestimenta { background: linear-gradient(180deg, #0d2a14 0%, #0d1f0d 100%); }
 .outfit-card { max-width: 340px; width: 100%; text-align: center; }
 .outfit-emojis { font-size: 4rem; margin: 16px 0; letter-spacing: 8px; }
 .outfit-card h2 { font-family: 'Creepster', cursive; font-size: 2rem; color: var(--amber); margin-bottom: 10px; }
