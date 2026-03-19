@@ -86,15 +86,16 @@
         
         <div class="egg-crack" id="crack-layer">
           <svg viewBox="0 0 160 190" xmlns="http://www.w3.org/2000/svg" style="position:absolute;inset:0;width:100%;height:100%">
-            <polyline points="80,60 70,90 85,110 75,140" fill="none" stroke="#000" stroke-width="3" stroke-linecap="round" opacity=".7"/>
-            <polyline points="80,60 95,85 88,105 100,130" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" opacity=".7"/>
-            <line x1="65" y1="80" x2="55" y2="75" stroke="#000" stroke-width="2" opacity=".5"/>
+            <polyline points="80,60 70,90 85,110 75,140" fill="none" stroke="#aaff00" stroke-width="3" stroke-linecap="round" style="filter: drop-shadow(0 0 6px #aaff00);" opacity=".9"/>
+            <polyline points="80,60 95,85 88,105 100,130" fill="none" stroke="#ffb300" stroke-width="2.5" stroke-linecap="round" style="filter: drop-shadow(0 0 6px #ffb300);" opacity=".9"/>
+            <line x1="65" y1="80" x2="55" y2="75" stroke="#aaff00" stroke-width="2" style="filter: drop-shadow(0 0 4px #aaff00);" opacity=".8"/>
           </svg>
         </div>
       </div>
     </div>
     <p id="splash-title">¡¿LISTO PARA LA AVENTURA?!</p>
-    <p id="splash-sub" class="pulse-text">Abre el huevo para comenzar...</p>
+    
+    <button id="crack-btn" class="action-btn">GOLPEAR HUEVO</button>
   </div>
 
   <nav id="nav-dots">
