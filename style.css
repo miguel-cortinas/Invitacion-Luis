@@ -15,12 +15,23 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 html { scroll-behavior: smooth; }
 
+/* La fuente Nunito rige para toda lectura, Bebas rige para los títulos */
 body {
   font-family: 'Nunito', sans-serif;
   background: var(--jungle-dark);
   color: var(--text-light);
   overflow-x: hidden;
   min-height: 100vh;
+}
+
+/* Clase maestra para los títulos de sección (Eliminando la deuda técnica del HTML) */
+.section-main-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2.6rem;
+  letter-spacing: 3px;
+  color: var(--amber);
+  margin-bottom: 16px;
+  text-align: center;
 }
 
 /* ========== SPLASH ========== */
@@ -68,7 +79,6 @@ body {
   75% { transform: translate(-4px, -6px) rotate(-3deg); }
 }
 
-/* NUEVO: Onda expansiva (Shockwave) al golpear */
 .shockwave {
   position: absolute;
   top: 50%; left: 50%;
@@ -211,12 +221,18 @@ section {
   margin-bottom: 12px;
   filter: drop-shadow(0 0 20px rgba(170,255,0,0.4));
 }
+
+/* El nombre reestructurado con Bebas Neue y sombras potentes */
 .hero-name {
-  font-family: 'Creepster', cursive;
-  font-size: clamp(2rem, 9vw, 3.5rem); color: var(--amber);
-  text-shadow: 0 0 30px rgba(255,179,0,0.7), 2px 2px 0 #000;
-  margin-bottom: 6px; letter-spacing: 2px;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(3rem, 12vw, 5.5rem); 
+  color: var(--amber);
+  text-shadow: 0 0 30px rgba(255,179,0,0.7), 3px 3px 0 #000;
+  margin-bottom: 6px; 
+  letter-spacing: 3px;
+  line-height: 1;
 }
+
 .hero-age {
   font-family: 'Bebas Neue', sans-serif;
   font-size: clamp(3.5rem, 16vw, 7rem);
@@ -246,7 +262,7 @@ section {
 }
 .invite-card::before { content: '🌿'; position: absolute; top: -18px; left: 20px; font-size: 2rem; }
 .invite-card::after  { content: '🌿'; position: absolute; top: -18px; right: 20px; font-size: 2rem; transform: scaleX(-1); }
-.invite-card h2 { font-family: 'Creepster', cursive; font-size: 1.8rem; color: var(--amber); margin-bottom: 16px; }
+.invite-card h2 { font-family: 'Bebas Neue', sans-serif; font-size: 2.2rem; letter-spacing: 2px; color: var(--amber); margin-bottom: 16px; }
 .invite-card p { font-size: 1.05rem; line-height: 1.7; color: var(--text-light); opacity: 0.9; }
 .invite-card .highlight { color: var(--acid); font-weight: 900; }
 .dino-divider { display: flex; align-items: center; gap: 10px; margin: 20px 0; opacity: 0.4; }
@@ -273,7 +289,7 @@ section {
 .countdown-block::after { content: ''; position: absolute; top: 50%; left: 0; right: 0; height: 1px; background: rgba(170,255,0,0.15); }
 .cd-num { font-family: 'Bebas Neue', sans-serif; font-size: 3rem; line-height: 1; color: var(--amber); text-shadow: 0 0 20px rgba(255,179,0,0.5); }
 .cd-label { font-size: 0.6rem; letter-spacing: 3px; color: rgba(255,255,255,0.4); margin-top: 6px; text-transform: uppercase; }
-.countdown-done { font-family: 'Creepster', cursive; font-size: 2rem; color: var(--dino-red); animation: pulse 1s infinite; }
+.countdown-done { font-family: 'Bebas Neue', sans-serif; font-size: 2.8rem; letter-spacing: 2px; color: var(--dino-red); animation: pulse 1s infinite; }
 @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.5; } }
 
 /* ========== UBICACIÓN ========== */
